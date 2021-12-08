@@ -1,14 +1,8 @@
-import Circle from "./Circle";
+import styled from "styled-components";
+import Router from "./Router";
 
 function App() {
-  return (
-    <>
-      <div>
-        <Circle borderColor="blue" bgColor="tomato" />
-        <Circle text="hi" bgColor="teal" />
-      </div>
-    </>
-  );
+  return <Router />;
 }
 
 export default App;
