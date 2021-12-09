@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import {
   Route,
   Routes,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { CoinInfoFetcher, CoinPriceFetcher } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
 
@@ -89,6 +90,10 @@ const Tap = styled.div<ITap>`
   }
 `;
 
+interface IParams {
+  coinId: string;
+}
+
 interface ILocation {
   state: {
     name: string;
@@ -150,37 +155,46 @@ interface IPriceData {
 }
 
 function Coin() {
-  const { coinId } = useParams();
-  const [loading, setLoading] = useState(true);
+  const { coinId } = useParams() as IParams;
   const { state } = useLocation() as ILocation;
-
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
 
   const chartMatch = useMatch("/:id/chart");
   const priceMatch = useMatch("/:id/price");
 
-  useEffect(() => {
-    (async () => {
-      const coinData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const coinPriceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(coinData);
-      setPriceInfo(coinPriceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(
+    ["info", coinId],
+    () => CoinInfoFetcher(coinId)
+  );
+  const { isLoading: priceLoading, data: priceData } = useQuery<IPriceData>(
+    ["price", coinId],
+    () => CoinPriceFetcher(coinId)
+  );
+
+  // const [loading, setLoading] = useState(true);
+  // const [info, setInfo] = useState<IInfoData>();
+  // const [priceInfo, setPriceInfo] = useState<IPriceData>();
+  // useEffect(() => {
+  //   (async () => {
+  //     const coinData = await (
+  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+  //     ).json();
+  //     const coinPriceData = await (
+  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+  //     ).json();
+  //     setInfo(coinData);
+  //     setPriceInfo(coinPriceData);
+  //     setLoading(false);
+  //   })();
+  // }, [coinId]);
+  const loading = infoLoading || priceLoading;
 
   return (
     <Container>
       <Header>
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
           <img
-            src={`https://cryptoicon-api.vercel.app/api/icon/${info?.symbol.toLowerCase()}`}
+            src={`https://cryptoicon-api.vercel.app/api/icon/${infoData?.symbol.toLowerCase()}`}
             alt="coin symbol"
           />
         </Title>
@@ -191,18 +205,18 @@ function Coin() {
         <>
           <OverView>
             <OverViewItem>
-              <span>Rank: {info?.rank}</span>
+              <span>Rank: {infoData?.rank}</span>
             </OverViewItem>
             <OverViewItem>
-              <span>Symbol: {info?.symbol}</span>
+              <span>Symbol: {infoData?.symbol}</span>
             </OverViewItem>
           </OverView>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
 
           <OverView>
             <OverViewItem>
-              <div>Total Supply: {priceInfo?.total_supply}</div>
-              <div>Max Supply: {priceInfo?.max_supply}</div>
+              <div>Total Supply: {priceData?.total_supply}</div>
+              <div>Max Supply: {priceData?.max_supply}</div>
             </OverViewItem>
           </OverView>
 
