@@ -89,6 +89,12 @@ const Tap = styled.div<ITap>`
   }
 `;
 
+interface ILocation {
+  state: {
+    name: string;
+  };
+}
+
 interface IInfoData {
   id: string;
   name: string;
@@ -146,7 +152,8 @@ interface IPriceData {
 function Coin() {
   const { coinId } = useParams();
   const [loading, setLoading] = useState(true);
-  const { state } = useLocation();
+  const { state } = useLocation() as ILocation;
+
   const [info, setInfo] = useState<IInfoData>();
   const [priceInfo, setPriceInfo] = useState<IPriceData>();
 
