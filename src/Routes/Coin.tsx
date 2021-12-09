@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useMatch,
+  useParams,
+} from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Chart from "./Chart";
+import Price from "./Price";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -50,6 +59,34 @@ const OverViewItem = styled.div`
 
 const Description = styled.p`
   margin-bottom: 30px;
+`;
+
+const Taps = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+`;
+
+interface ITap {
+  isActive: boolean;
+}
+
+const Tap = styled.div<ITap>`
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 45%;
+  color: ${(props) =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  a {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 interface IInfoData {
@@ -113,6 +150,9 @@ function Coin() {
   const [info, setInfo] = useState<IInfoData>();
   const [priceInfo, setPriceInfo] = useState<IPriceData>();
 
+  const chartMatch = useMatch("/:id/chart");
+  const priceMatch = useMatch("/:id/price");
+
   useEffect(() => {
     (async () => {
       const coinData = await (
@@ -154,10 +194,24 @@ function Coin() {
 
           <OverView>
             <OverViewItem>
-              <div>All-Time-High: {priceInfo?.quotes.USD.ath_price} $</div>
               <div>Total Supply: {priceInfo?.total_supply}</div>
+              <div>Max Supply: {priceInfo?.max_supply}</div>
             </OverViewItem>
           </OverView>
+
+          <Taps>
+            <Tap isActive={chartMatch !== null}>
+              <Link to="chart">Chart</Link>
+            </Tap>
+            <Tap isActive={priceMatch !== null}>
+              <Link to="price">Price</Link>
+            </Tap>
+          </Taps>
+
+          <Routes>
+            <Route path="price" element={<Price />} />
+            <Route path="chart" element={<Chart />} />
+          </Routes>
         </>
       )}
     </Container>
