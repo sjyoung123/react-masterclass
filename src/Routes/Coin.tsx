@@ -1,3 +1,5 @@
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import {
@@ -5,6 +7,7 @@ import {
   Routes,
   useLocation,
   useMatch,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -24,9 +27,16 @@ const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
   img {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     margin-left: 10px;
+  }
+  svg {
+    width: 40px;
+    height: 40px;
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;
 
@@ -159,6 +169,8 @@ function Coin() {
   const { coinId } = useParams() as IParams;
   const { state } = useLocation() as ILocation;
 
+  let navigate = useNavigate();
+
   const chartMatch = useMatch("/:id/chart");
   const priceMatch = useMatch("/:id/price");
 
@@ -169,10 +181,14 @@ function Coin() {
   const { isLoading: priceLoading, data: priceData } = useQuery<IPriceData>(
     ["price", coinId],
     () => CoinPriceFetcher(coinId),
-    { refetchInterval: 5000 }
+    { refetchInterval: 10000 }
   );
 
   const loading = infoLoading || priceLoading;
+
+  const onClick = () => {
+    navigate("/");
+  };
 
   return (
     <Container>
@@ -183,6 +199,7 @@ function Coin() {
       </Helmet>
       <Header>
         <Title>
+          <FontAwesomeIcon icon={faHome} onClick={onClick} />
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
           <img
             src={`https://cryptoicon-api.vercel.app/api/icon/${infoData?.symbol.toLowerCase()}`}
@@ -224,7 +241,7 @@ function Coin() {
           </Taps>
 
           <Routes>
-            <Route path="price" element={<Price />} />
+            <Route path="price" element={<Price coinId={coinId} />} />
             <Route path="chart" element={<Chart coinId={coinId} />} />
           </Routes>
         </>
