@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import {
   Route,
@@ -167,29 +168,19 @@ function Coin() {
   );
   const { isLoading: priceLoading, data: priceData } = useQuery<IPriceData>(
     ["price", coinId],
-    () => CoinPriceFetcher(coinId)
+    () => CoinPriceFetcher(coinId),
+    { refetchInterval: 5000 }
   );
 
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<IInfoData>();
-  // const [priceInfo, setPriceInfo] = useState<IPriceData>();
-  // useEffect(() => {
-  //   (async () => {
-  //     const coinData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //     ).json();
-  //     const coinPriceData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //     ).json();
-  //     setInfo(coinData);
-  //     setPriceInfo(coinPriceData);
-  //     setLoading(false);
-  //   })();
-  // }, [coinId]);
   const loading = infoLoading || priceLoading;
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -209,6 +200,9 @@ function Coin() {
             </OverViewItem>
             <OverViewItem>
               <span>Symbol: {infoData?.symbol}</span>
+            </OverViewItem>
+            <OverViewItem>
+              <span>Price: ${priceData?.quotes.USD.price.toFixed(2)}</span>
             </OverViewItem>
           </OverView>
           <Description>{infoData?.description}</Description>
@@ -231,7 +225,7 @@ function Coin() {
 
           <Routes>
             <Route path="price" element={<Price />} />
-            <Route path="chart" element={<Chart />} />
+            <Route path="chart" element={<Chart coinId={coinId} />} />
           </Routes>
         </>
       )}
