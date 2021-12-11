@@ -164,8 +164,11 @@ interface IPriceData {
     };
   };
 }
+interface IIsDark {
+  isDark: boolean;
+}
 
-function Coin() {
+function Coin({ isDark }: IIsDark) {
   const { coinId } = useParams() as IParams;
   const { state } = useLocation() as ILocation;
 

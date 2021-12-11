@@ -30,7 +30,7 @@ const CoinListContainer = styled.div`
 const CoinList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: ghostwhite;
+  background-color: ${(props) => props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
   margin-bottom: 10px;
   border-radius: 15px;
@@ -67,8 +67,11 @@ interface ICoins {
   is_active: boolean;
   type: string;
 }
+interface IIsDark {
+  isDark: boolean;
+}
 
-function Coins() {
+function Coins({ isDark }: IIsDark) {
   const { isLoading, data } = useQuery<ICoins[]>("allCoins", CoinsFetcher);
 
   return (
