@@ -67,11 +67,8 @@ interface ICoins {
   is_active: boolean;
   type: string;
 }
-interface IIsDark {
-  isDark: boolean;
-}
 
-function Coins({ isDark }: IIsDark) {
+function Coins() {
   const { isLoading, data } = useQuery<ICoins[]>("allCoins", CoinsFetcher);
 
   return (

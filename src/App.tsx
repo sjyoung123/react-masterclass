@@ -1,9 +1,10 @@
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import Router from "./Router";
-// import { ReactQueryDevtools } from "react-query/devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { DarkModeToggle } from "react-dark-mode-toggle-2";
-import { useState } from "react";
 import { light, theme } from "./theme";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "./atom";
 
 const GlobalCss = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -72,7 +73,9 @@ const ToggleContainer = styled.div`
 `;
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const isDarkMode = useRecoilValue(isDarkAtom);
+  const setIsDarkMode = useSetRecoilState(isDarkAtom);
+
   return (
     <>
       <ToggleContainer>
@@ -84,8 +87,8 @@ function App() {
       </ToggleContainer>
       <ThemeProvider theme={isDarkMode ? theme : light}>
         <GlobalCss />
-        <Router isDark={isDarkMode} />
-        {/* <ReactQueryDevtools /> */}
+        <Router />
+        <ReactQueryDevtools />
       </ThemeProvider>
     </>
   );

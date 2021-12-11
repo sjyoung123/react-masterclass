@@ -164,11 +164,8 @@ interface IPriceData {
     };
   };
 }
-interface IIsDark {
-  isDark: boolean;
-}
 
-function Coin({ isDark }: IIsDark) {
+function Coin() {
   const { coinId } = useParams() as IParams;
   const { state } = useLocation() as ILocation;
 
@@ -244,7 +241,10 @@ function Coin({ isDark }: IIsDark) {
           </Taps>
 
           <Routes>
-            <Route path="price" element={<Price coinId={coinId} />} />
+            <Route
+              path="price"
+              element={<Price isLoading={priceLoading} data={priceData} />}
+            />
             <Route path="chart" element={<Chart coinId={coinId} />} />
           </Routes>
         </>

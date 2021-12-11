@@ -1,6 +1,4 @@
-import { useQuery } from "react-query";
 import styled from "styled-components";
-import { CoinPriceFetcher } from "../api";
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +18,8 @@ const Text = styled.span<{ isPositive?: Boolean }>`
 `;
 
 interface ICoinId {
-  coinId: string;
+  isLoading: boolean;
+  data?: IPriceDetail;
 }
 interface IPriceDetail {
   id: string;
@@ -55,12 +54,12 @@ interface IPriceDetail {
   };
 }
 
-function Price({ coinId }: ICoinId) {
-  const { isLoading, data } = useQuery<IPriceDetail>(
-    ["priceDetail", coinId],
-    () => CoinPriceFetcher(coinId),
-    { refetchInterval: 10000 }
-  );
+function Price({ isLoading, data }: ICoinId) {
+  // const { isLoading, data } = useQuery<IPriceDetail>(
+  //   ["priceDetail", coinId],
+  //   () => CoinPriceFetcher(coinId),
+  //   { refetchInterval: 10000 }
+  // );
 
   function checkPositive(value: number | undefined) {
     if (value) {
