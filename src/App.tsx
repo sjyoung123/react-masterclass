@@ -1,6 +1,6 @@
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import Router from "./Router";
-import { ReactQueryDevtools } from "react-query/devtools";
+// import { ReactQueryDevtools } from "react-query/devtools";
 import { DarkModeToggle } from "react-dark-mode-toggle-2";
 import { light, theme } from "./theme";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -88,7 +88,7 @@ function App() {
       <ThemeProvider theme={isDarkMode ? theme : light}>
         <GlobalCss />
         <Router />
-        <ReactQueryDevtools />
+        {/* <ReactQueryDevtools /> */}
       </ThemeProvider>
     </>
   );
